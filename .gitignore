@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+
+# Конфиденциальные данные (ВАЖНО!)
+.env
+auth_state.json
+
+# Отчеты и результаты тестов
+test-results/
+playwright-report/
+blob-report/
+videos/
+screenshots/
+dist/
+build/
+
+# IDE
+.idea/
+.vscode/
+
+# Прочее
+.DS_Store
