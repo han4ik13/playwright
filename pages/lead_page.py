@@ -60,8 +60,11 @@ class LeadPage(BasePage):
         self.page.get_by_placeholder(self._IIN_INPUT_NAME).fill(iin)
         self.click_by_locator(self._ACTIVE_DROPDOWN_LOCATOR)
         close_btn = self.page.locator(self._CLOSE_MODAL_BTN)
-        if close_btn.wait_for(state="visible", timeout=5000):
+        try:
+            close_btn.wait_for(state="visible", timeout=5000)
             close_btn.click()
+        except Exception:
+            pass  # модальное окно не появилось — ок
         self.click_button_by_data_test(self._LEAD_CLIENT_NEXT_BTN)
 
     def add_new_car(self,

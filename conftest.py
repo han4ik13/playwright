@@ -1,5 +1,9 @@
 import pytest
+from faker import Faker
 from playwright.sync_api import Browser
+
+faker = Faker()
+
 
 @pytest.fixture(scope="session")
 def browser_context_args(browser_context_args):
@@ -11,6 +15,7 @@ def browser_context_args(browser_context_args):
         }
     }
 
+
 @pytest.fixture(scope="session")
 def browser_type_launch_args(browser_type_launch_args):
     return {
@@ -21,6 +26,7 @@ def browser_type_launch_args(browser_type_launch_args):
         ]
     }
 
+
 # 1. Создаем один контекст на всю сессию
 @pytest.fixture(scope="session")
 def browser_context(browser: Browser, browser_context_args):
@@ -29,6 +35,7 @@ def browser_context(browser: Browser, browser_context_args):
     yield context
     context.close()
 
+
 # 2. Создаем одну страницу на всю сессию
 @pytest.fixture(scope="session")
 def page(browser_context):
@@ -36,10 +43,42 @@ def page(browser_context):
     yield page
     page.close()  # Необязательно, закроется вместе с контекстом
 
+
 @pytest.fixture(scope="session", autouse=True)
 def configure_selectors(playwright):
     playwright.selectors.set_test_id_attribute("data-test")
 
+
 @pytest.fixture()
 def client_iin():
     return '020630501048'
+
+
+@pytest.fixture()
+def client_last_name():
+    return faker.last_name()
+
+
+@pytest.fixture()
+def client_first_name():
+    return faker.first_name()
+
+
+@pytest.fixture()
+def car_vin():
+    return faker.vin()
+
+
+@pytest.fixture()
+def car_series_number():
+    return faker.bothify(text='###???##').upper()
+
+
+@pytest.fixture()
+def car_issue_date():
+    return faker.date_this_month().strftime("%d.%m.%Y")
+
+
+@pytest.fixture()
+def car_registration_number():
+    return faker.bothify(text='###???##').upper()

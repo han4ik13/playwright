@@ -2,20 +2,10 @@ import re
 import time
 
 from playwright.sync_api import expect
-from faker import Faker
 
 from config import Config
 from pages.login_page import LoginPage
 from pages.lead_page import LeadPage
-
-faker = Faker()
-
-VIN = faker.vin()
-SERIES_NUMBER = faker.bothify(text='###???##').upper()
-ISSUE_DATE = faker.date_this_month().strftime("%d.%m.%Y")
-REGISTRATION_NUMBER = faker.bothify(text='###???##').upper()
-LAST_NAME = faker.last_name()
-FIRST_NAME = faker.first_name()
 
 
 def test_login_page(page):
@@ -34,12 +24,27 @@ def test_login_page(page):
     expect(page).to_have_url(re.compile(f"{Config.BASE_URL}/tradein"))
 
 
-
-def test_lead_page(page, client_iin):
+def test_lead_page(
+        page,
+        client_iin,
+        client_last_name,
+        client_first_name,
+        car_vin,
+        car_issue_date,
+        car_series_number,
+        car_registration_number
+):
     lead_page = LeadPage(page)
 
     lead_page.add_type_buy_deal()
     lead_page.add_client(iin=client_iin)
-    lead_page.add_new_car(VIN, SERIES_NUMBER, ISSUE_DATE, REGISTRATION_NUMBER, LAST_NAME, FIRST_NAME)
+    lead_page.add_new_car(
+        vin=car_vin,
+        series_number=car_series_number,
+        issue_date=car_issue_date,
+        registration_number=car_registration_number,
+        last_name=client_last_name,
+        first_name=client_first_name
+    )
 
     time.sleep(5)
