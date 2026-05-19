@@ -1,30 +1,17 @@
 import re
-import time
 
 from playwright.sync_api import expect
 
 from config import Config
-from pages.login_page import LoginPage
 from pages.lead_page import LeadPage
 
 
-def test_login_page(page):
-    login_page = LoginPage(page)
-
-    login_page.open()
-    expect(page).to_have_title("Mycar Pro")
-    login_page.login(
-        email=Config.EMAIL,
-        password=Config.PASSWORD
-    )
-    if Config.SECRET_KEY != '':
-        login_page.enter_2fa_code_for_prod(secret_key=Config.SECRET_KEY)
-    else:
-        login_page.enter_2fa_code_for_dev()
+def test_login_page(login, page):
     expect(page).to_have_url(re.compile(f"{Config.BASE_URL}/tradein"))
 
 
 def test_lead_page(
+        login,
         page,
         client_iin,
         client_last_name,
@@ -47,4 +34,3 @@ def test_lead_page(
         first_name=client_first_name
     )
 
-    time.sleep(5)
