@@ -1,4 +1,5 @@
 from playwright.sync_api import Page, expect
+from playwright.sync_api import TimeoutError as PlaywrightTimeoutError
 
 from pages.base_page import BasePage
 from config import Config
@@ -63,7 +64,7 @@ class LeadPage(BasePage):
         try:
             close_btn.wait_for(state="visible", timeout=5000)
             close_btn.click()
-        except Exception:
+        except PlaywrightTimeoutError:
             pass  # модальное окно не появилось — ок
         self.click_button_by_data_test(self._LEAD_CLIENT_NEXT_BTN)
 
