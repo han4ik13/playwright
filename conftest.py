@@ -2,8 +2,11 @@ import pytest
 from faker import Faker
 from playwright.sync_api import Browser
 
+from config import Config
+
 faker = Faker()
 
+Config.validate()
 
 @pytest.fixture(scope="session")
 def browser_context_args(browser_context_args):
