@@ -34,6 +34,7 @@ class LeadPage(BasePage):
     _DROPDOWN_ITEM_LOCATOR = ".mcp-select__dd-item"
     _ACTIVE_DROPDOWN_LOCATOR = ".app-dropdown__menu-wrap.is-open"
     _CLOSE_MODAL_BTN = ".mcp-btn--icon-plain"
+    _TOAST_BTN_LOCATOR = ".Toastify__toast button"
     _BRAND_BTN_LOCATOR = ".deal-brand__btn"
     _MODEL_BTN_LOCATOR = ".deal-model__btn"
     _YEAR_BTN_LOCATOR = ".deal-year__btn"
@@ -67,6 +68,12 @@ class LeadPage(BasePage):
         except PlaywrightTimeoutError:
             pass  # модальное окно не появилось — ок
         self.click_button_by_data_test(self._LEAD_CLIENT_NEXT_BTN)
+        toast = self.page.locator(self._TOAST_BTN_LOCATOR)
+        try:
+            toast.wait_for(state="visible", timeout=5000)
+            toast.click()
+        except PlaywrightTimeoutError:
+            pass
 
     def add_new_car(self,
                     vin: str,
