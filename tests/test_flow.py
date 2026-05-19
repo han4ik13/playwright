@@ -33,4 +33,5 @@ def test_lead_page(
         last_name=client_last_name,
         first_name=client_first_name
     )
+    expect(page).to_have_url(re.compile(rf"{re.escape(Config.BASE_URL)}/tradein/buy-deal/\d+/card-auto"))
 
