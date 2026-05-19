@@ -1,12 +1,16 @@
+import re
+
 import pytest
 from faker import Faker
-from playwright.sync_api import Browser
+from playwright.sync_api import Browser, expect
 
 from config import Config
+from pages.login_page import LoginPage
 
 faker = Faker()
 
 Config.validate()
+
 
 @pytest.fixture(scope="session")
 def browser_context_args(browser_context_args):
@@ -23,14 +27,11 @@ def browser_context_args(browser_context_args):
 def browser_type_launch_args(browser_type_launch_args):
     return {
         **browser_type_launch_args,
-        "args": [
-            "--start-maximized",
-            "--window-size=1920,1080"
-        ]
+        "args": ["--window-size=1650,1080"]
     }
 
 
-# 1. Создаем один контекст на всю сессию
+# Создаем один контекст на всю сессию
 @pytest.fixture(scope="session")
 def browser_context(browser: Browser, browser_context_args):
     # ВАЖНО: передаем browser_context_args сюда!
@@ -39,17 +40,29 @@ def browser_context(browser: Browser, browser_context_args):
     context.close()
 
 
-# 2. Создаем одну страницу на всю сессию
+@pytest.fixture(scope="session", autouse=True)
+def configure_selectors(playwright):
+    playwright.selectors.set_test_id_attribute("data-test")
+
+
+# Создаем одну страницу на всю сессию
 @pytest.fixture(scope="session")
-def page(browser_context):
+def page(browser_context, configure_selectors):
     page = browser_context.new_page()
     yield page
     page.close()  # Необязательно, закроется вместе с контекстом
 
 
-@pytest.fixture(scope="session", autouse=True)
-def configure_selectors(playwright):
-    playwright.selectors.set_test_id_attribute("data-test")
+@pytest.fixture(scope="session")
+def login(page):
+    login_page = LoginPage(page)
+    login_page.open()
+    login_page.login(email=Config.EMAIL, password=Config.PASSWORD)
+    if Config.SECRET_KEY:
+        login_page.enter_2fa_code_for_prod(secret_key=Config.SECRET_KEY)
+    else:
+        login_page.enter_2fa_code_for_dev()
+    expect(page).to_have_url(re.compile(f"{Config.BASE_URL}/tradein"))
 
 
 @pytest.fixture()
