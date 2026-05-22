@@ -4,6 +4,7 @@ from playwright.sync_api import expect
 
 from config import Config
 from pages.lead_page import LeadPage
+from pages.assessment_page import AssessmentPage
 
 
 def test_login_page(login, page):
@@ -35,3 +36,6 @@ def test_lead_page(
     )
     expect(page).to_have_url(re.compile(rf"{re.escape(Config.BASE_URL)}/tradein/buy-deal/\d+/card-auto"))
 
+def test_assessment_page(login, page):
+    assessment_page = AssessmentPage(page)
+    assessment_page.add_assessment()
